@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Attendance Portal</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="check_in.css">
+</head>
+<body class="bg-gradient-to-br from-blue-50 to-gray-100 min-h-screen p-4">
+    <div class="max-w-2xl mx-auto">
+        <!-- Header with Employee Info -->
+        <header class="mb-8 fade-in">
+            <div class="flex flex-col md:flex-row items-center justify-between bg-white rounded-2xl shadow-lg p-6 mb-6">
+                <div class="flex items-center mb-4 md:mb-0">
+                    <div class="employee-avatar bg-gradient-to-r from-blue-500 to-purple-600 text-white mr-4">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-2xl font-bold text-gray-800">Welcome, <span class="text-blue-600" id="employee-name">Employee 1</span></h1>
+                        <div class="flex items-center mt-1">
+                            <span class="status-indicator status-present"></span>
+                            <span class="text-gray-600" id="employee-id">ID: EMP001</span>
+                            <span class="mx-2">•</span>
+                            <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-xs font-semibold">
+                                <i class="fas fa-briefcase mr-1"></i> Full-Time
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center md:text-right">
+                    <div class="text-3xl font-bold text-gray-800 mb-1" id="current-time">00:00:00</div>
+                    <div class="text-gray-600" id="current-date">Loading...</div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Attendance Card -->
+        <main class="fade-in" style="animation-delay: 0.1s;">
+            <div class="attendance-card bg-white p-6 md:p-8 mb-8 today-highlight">
+                <div class="text-center mb-8">
+                    <h2 class="text-2xl font-bold text-gray-800 mb-2">
+                        <i class="fas fa-fingerprint mr-2 text-blue-600"></i>
+                        Daily Attendance
+                    </h2>
+                    <p class="text-gray-600">Track your work hours for today</p>
+                </div>
+
+                <!-- Current Status -->
+                <div class="mb-8 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl border border-blue-100">
+                    <h3 class="font-bold text-gray-700 mb-4 flex items-center">
+                        <i class="fas fa-chart-line mr-2 text-blue-600"></i>
+                        Today's Status
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="text-center p-4 bg-white rounded-lg shadow-sm">
+                            <div class="text-gray-500 text-sm mb-1">Current Status</div>
+                            <div id="current-status" class="text-xl font-bold text-green-600 flex items-center justify-center">
+                                <span class="status-indicator status-present mr-2"></span>
+                                <span>Present</span>
+                            </div>
+                        </div>
+                        <div class="text-center p-4 bg-white rounded-lg shadow-sm">
+                            <div class="text-gray-500 text-sm mb-1">Check-in Time</div>
+                            <div id="check-in-display" class="text-xl font-bold time-display">--:--:--</div>
+                        </div>
+                        <div class="text-center p-4 bg-white rounded-lg shadow-sm">
+                            <div class="text-gray-500 text-sm mb-1">Total Hours</div>
+                            <div id="total-hours" class="text-xl font-bold text-purple-600">0.0 hrs</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mb-8">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <button
+                            id="check-in-btn"
+                            class="btn-action py-5 px-6 rounded-xl text-white text-lg font-bold flex flex-col items-center justify-center check-in-btn"
+                        >
+                            <i class="fas fa-sign-in-alt text-2xl mb-2"></i>
+                            <span>CHECK IN</span>
+                            <span class="text-sm font-normal mt-1 opacity-90">Start your workday</span>
+                        </button>
+                        
+                        <button
+                            id="check-out-btn"
+                            class="btn-action py-5 px-6 rounded-xl text-white text-lg font-bold flex flex-col items-center justify-center check-out-btn"
+                        >
+                            <i class="fas fa-sign-out-alt text-2xl mb-2"></i>
+                            <span>CHECK OUT</span>
+                            <span class="text-sm font-normal mt-1 opacity-90">End your workday</span>
+                        </button>
+                    </div>
+                    
+                    <!-- Status Message -->
+                    <div id="status-message" class="mt-6 p-4 rounded-lg text-center hidden">
+                        <i class="fas fa-info-circle mr-2"></i>
+                        <span id="message-text"></span>
+                    </div>
+                </div>
+
+                <!-- Today's Timeline -->
+                <div class="border-t pt-6">
+                    <h3 class="font-bold text-gray-700 mb-4 flex items-center">
+                        <i class="fas fa-history mr-2 text-blue-600"></i>
+                        Today's Timeline
+                    </h3>
+                    <div class="space-y-4">
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-green-100 flex items-center justify-center mr-4">
+                                <i class="fas fa-play text-green-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium text-gray-800">Check In</div>
+                                <div id="check-in-time-detail" class="text-gray-500 text-sm">--:--:--</div>
+                            </div>
+                            <div id="check-in-badge" class="px-3 py-1 bg-green-100 text-green-800 rounded-full text-xs font-semibold">
+                                STARTED
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-center">
+                            <div class="w-10 h-10 rounded-full bg-red-100 flex items-center justify-center mr-4">
+                                <i class="fas fa-stop text-red-600"></i>
+                            </div>
+                            <div class="flex-1">
+                                <div class="font-medium text-gray-800">Check Out</div>
+                                <div id="check-out-time-detail" class="text-gray-500 text-sm">--:--:--</div>
+                            </div>
+                            <div id="check-out-badge" class="px-3 py-1 bg-gray-100 text-gray-800 rounded-full text-xs font-semibold">
+                                PENDING
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Today's Summary -->
+        <section class="fade-in" style="animation-delay: 0.2s;">
+            <div class="attendance-card bg-gradient-to-r from-blue-600 to-indigo-700 text-white p-6 md:p-8 mb-8">
+                <h3 class="text-xl font-bold mb-6 flex items-center">
+                    <i class="fas fa-chart-pie mr-3"></i>
+                    Today's Summary
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="text-center p-4 bg-white bg-opacity-20 rounded-xl">
+                        <div class="text-3xl font-bold mb-1" id="work-hours">0.0</div>
+                        <div class="text-blue-100">Work Hours</div>
+                    </div>
+                    
+                    <div class="text-center p-4 bg-white bg-opacity-20 rounded-xl">
+                        <div class="text-3xl font-bold mb-1" id="break-time">0.0</div>
+                        <div class="text-blue-100">Break Time (hrs)</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Recent Activity -->
+        <section class="fade-in" style="animation-delay: 0.3s;">
+            <div class="attendance-card bg-white p-6 mb-8">
+                <h3 class="font-bold text-gray-700 mb-4 flex items-center">
+                    <i class="fas fa-calendar-alt mr-2 text-blue-600"></i>
+                    This Week's Activity
+                </h3>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr class="border-b">
+                                <th class="text-left py-3 text-gray-600 font-medium">Date</th>
+                                <th class="text-left py-3 text-gray-600 font-medium">Check In</th>
+                                <th class="text-left py-3 text-gray-600 font-medium">Check Out</th>
+                                <th class="text-left py-3 text-gray-600 font-medium">Hours</th>
+                                <th class="text-left py-3 text-gray-600 font-medium">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="weekly-activity">
+                            <!-- Will be populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 text-sm mt-8 mb-4">
+            <p>Employee Self-Service Portal • <span id="current-year">2023</span></p>
+            <p class="mt-1">Secure attendance tracking system</p>
+            <div class="mt-4 pt-4 border-t border-gray-200">
+                <div class="flex justify-center space-x-4">
+                    <button id="help-btn" class="text-blue-600 hover:text-blue-800">
+                        <i class="fas fa-question-circle mr-1"></i> Help
+                    </button>
+                    <button id="report-btn" class="text-red-600 hover:text-red-800">
+                        <i class="fas fa-exclamation-triangle mr-1"></i> Report Issue
+                    </button>
+                    <button id="support-btn" class="text-green-600 hover:text-green-800">
+                        <i class="fas fa-headset mr-1"></i> Support
+                    </button>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-xl font-bold text-gray-800 mb-4 flex items-center">
+                <i class="fas fa-life-ring text-blue-600 mr-2"></i>
+                How to Use
+            </h3>
+            <div class="space-y-3 text-gray-600 mb-6">
+                <div class="flex items-start">
+                    <i class="fas fa-sign-in-alt text-green-500 mt-1 mr-3"></i>
+                    <div>
+                        <div class="font-medium">Check In</div>
+                        <div class="text-sm">Click the green button when you start work</div>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <i class="fas fa-sign-out-alt text-red-500 mt-1 mr-3"></i>
+                    <div>
+                        <div class="font-medium">Check Out</div>
+                        <div class="text-sm">Click the red button when you finish work</div>
+                    </div>
+                </div>
+                <div class="flex items-start">
+                    <i class="fas fa-clock text-blue-500 mt-1 mr-3"></i>
+                    <div>
+                        <div class="font-medium">Automatic Tracking</div>
+                        <div class="text-sm">Your hours are calculated automatically</div>
+                    </div>
+                </div>
+            </div>
+            <button id="close-help-btn" class="w-full py-3 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700">
+                Got it, thanks!
+            </button>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="check_in.js"></script>
+</body>
+</html>
